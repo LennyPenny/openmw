@@ -301,7 +301,8 @@ namespace MWGui
             return;
         }
 
-        // check if the player is attempting to sell back an item stolen from this actor
+        // check if the player is attempting to sell back an item stolen from this 
+        bool crimeCommited = false;
         for (std::vector<ItemStack>::iterator it = merchantBought.begin(); it != merchantBought.end(); ++it)
         {
             if (MWBase::Environment::get().getMechanicsManager()->isItemStolenFrom(it->mBase.getCellRef().getRefId(),
@@ -313,11 +314,17 @@ namespace MWGui
                 MWBase::Environment::get().getWindowManager()->messageBox(msg);
 
                 MWBase::Environment::get().getMechanicsManager()->confiscateStolenItemToOwner(player, it->mBase, mPtr, it->mCount);
-
+                
+                crimeCommited = true;
+            }
+        }
+        
+        if (crimeCommited)
+        {
                 onCancelButtonClicked(mCancelButton);
                 MWBase::Environment::get().getDialogueManager()->goodbyeSelected();
+            
                 return;
-            }
         }
 
         bool offerAccepted = mTrading.haggle(player, mPtr, mCurrentBalance, mCurrentMerchantOffer);
